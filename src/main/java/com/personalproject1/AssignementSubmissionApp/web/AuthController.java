@@ -8,14 +8,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personalproject1.AssignementSubmissionApp.domain.User;
 import com.personalproject1.AssignementSubmissionApp.dto.AuthCredentialsRequest;
 import com.personalproject1.AssignementSubmissionApp.util.JwtUtil;
+
+import io.jsonwebtoken.ExpiredJwtException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -52,6 +57,17 @@ public class AuthController {
 	        }
 	}
 	
+	@GetMapping("/validate")
+	public ResponseEntity<?> validateToken (@RequestParam String token, @AuthenticationPrincipal User user) {
+		try {
+			Boolean isTokenValid = jwtUtil.validateToken(token, user);
+			return ResponseEntity.ok(isTokenValid);
+		}catch(ExpiredJwtException e) {
+			return ResponseEntity.ok(false);
+		}
+		
+		
+	}
 	
 
 }
