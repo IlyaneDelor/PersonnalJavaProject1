@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.personalproject1.AssignementSubmissionApp.domain.Assignment;
 import com.personalproject1.AssignementSubmissionApp.domain.User;
+import com.personalproject1.AssignementSubmissionApp.dto.AssignmentResponseDto;
 import com.personalproject1.AssignementSubmissionApp.service.AssignmentService;
 
 @RestController
@@ -41,7 +42,10 @@ public class AssignmentController {
 	@GetMapping("{assignmentId}")
 	public ResponseEntity<?> getAssignment (@PathVariable Long assignmentId, @AuthenticationPrincipal User user) { 
 		Optional<Assignment> assignmentOpt = assignmentService.findById(assignmentId);
-		return ResponseEntity.ok(assignmentOpt.orElse(new Assignment()));
+		
+		AssignmentResponseDto response = new AssignmentResponseDto(assignmentOpt.orElse(new Assignment()));
+		
+		return ResponseEntity.ok(response);
 		
 		}
 	
