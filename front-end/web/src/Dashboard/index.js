@@ -3,7 +3,7 @@ import { useLocalState } from "../util/useLocalStorage";
 import { Link, Navigate } from "react-router-dom";
 import ajax from "../Services/fetchService";
 import Card from "react-bootstrap/Card";
-import { Button,Badge } from "react-bootstrap";
+import { Button,Badge,Row,Col } from "react-bootstrap";
 
 const Dashboard = () => {
   const [jwt, setJwt] = useLocalState("", "jwt");
@@ -23,6 +23,20 @@ const Dashboard = () => {
 
   return (
     <div style={{ margin: "2em" }}>
+      <Row>
+        <Col>
+        <div 
+        className="d-flex justify-content-end"
+        style={{cursor:"pointer"}}
+        onClick={() => {
+          setJwt(null);
+          window.location.href ="/login";
+        }}>
+
+          Logout
+        </div>
+        </Col>
+      </Row>
       <div className="mb-5">
         <Button size="lg" onClick={() => createAssignment()}>
           {" "}

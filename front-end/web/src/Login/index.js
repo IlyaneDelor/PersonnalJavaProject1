@@ -43,7 +43,7 @@ const Login = () => {
         <Row className="justify-content-center">
           <Col md="8" lg="6">
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label className="fs-4">Password</Form.Label>
+              <Form.Label className="fs-4">Username</Form.Label>
               <Form.Control
                 type="email"
                 size="lg"

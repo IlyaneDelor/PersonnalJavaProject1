@@ -3,6 +3,7 @@ package com.personalproject1.AssignementSubmissionApp.domain;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,7 +30,8 @@ public class User implements UserDetails{
 	private static final long serialVersionUID = 826235698077489633L;
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private LocalDate cohortStartDate;
+	
+	private String cohortStartDate;
 	private String username;
 	@JsonIgnore
 	private String password;
@@ -43,10 +46,10 @@ public class User implements UserDetails{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public LocalDate getCohortStartDate() {
+	public String getCohortStartDate() {
 		return cohortStartDate;
 	}
-	public void setCohortStartDate(LocalDate cohortStartDate) {
+	public void setCohortStartDate(String cohortStartDate) {
 		this.cohortStartDate = cohortStartDate;
 	}
 	@Override
