@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 
 public class Assignment {
@@ -19,7 +21,9 @@ public class Assignment {
 	private String codeReviewVideoUrl;
 	@ManyToOne(optional= false)
 	private User user;
-	//private User assignedTo;
+	
+	@ManyToOne
+	private User codeReviewer;
 	
 	public Long getId() {
 		return id;
@@ -62,6 +66,12 @@ public class Assignment {
 	}
 	public void setNumber(Integer number) {
 		this.number = number;
+	}
+	public User getCodeReviewer() {
+		return codeReviewer;
+	}
+	public void setCodeReviewer(User codeReviewer) {
+		this.codeReviewer = codeReviewer;
 	}
 	
 	

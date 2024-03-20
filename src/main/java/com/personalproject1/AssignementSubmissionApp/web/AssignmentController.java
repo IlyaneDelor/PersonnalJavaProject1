@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.personalproject1.AssignementSubmissionApp.domain.Assignment;
 import com.personalproject1.AssignementSubmissionApp.domain.User;
 import com.personalproject1.AssignementSubmissionApp.dto.AssignmentResponseDto;
+import com.personalproject1.AssignementSubmissionApp.enums.AuthorityEnum;
 import com.personalproject1.AssignementSubmissionApp.service.AssignmentService;
+import com.personalproject1.AssignementSubmissionApp.service.UserService;
+import com.personalproject1.AssignementSubmissionApp.util.AuthorityUtil;
 
 @RestController
 @RequestMapping("/api/assignments")
@@ -25,6 +28,9 @@ public class AssignmentController {
 	
 	@Autowired
 	private AssignmentService assignmentService;
+	@Autowired
+	private UserService userService;
+	
 	
 	@PostMapping("")
 	public ResponseEntity<?> createAssignment (@AuthenticationPrincipal User user) {
@@ -53,6 +59,15 @@ public class AssignmentController {
 	public ResponseEntity<?> updateAssignment (@PathVariable Long assignmentId, 
 			@RequestBody Assignment assignment,
 			@AuthenticationPrincipal User user) { 
+		
+			if(assignment.getCodeReviewer() != null) {
+				User codeReviewer = assignment.getCodeReviewer();
+				codeReviewer = userService.findUserByUsername(codeReviewer.getUsername()).orElse(new User());
+				
+				if(AuthorityUtil.hasRole(AuthorityEnum.ROLE_CODE_REVIEWER.name(), codeReviewer)) {
+					assignment.setCodeReviewer(codeReviewer);
+				}
+			}
 		
 			Assignment updateAssignment = assignmentService.save(assignment);
 			return ResponseEntity.ok(updateAssignment);

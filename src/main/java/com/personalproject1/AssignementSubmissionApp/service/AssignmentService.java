@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.personalproject1.AssignementSubmissionApp.domain.Assignment;
 import com.personalproject1.AssignementSubmissionApp.domain.User;
 import com.personalproject1.AssignementSubmissionApp.enums.AssignmentStatusEnum;
+import com.personalproject1.AssignementSubmissionApp.enums.AuthorityEnum;
 import com.personalproject1.AssignementSubmissionApp.repository.AssignmentRepository;
 
 @Service
@@ -53,7 +54,15 @@ public class AssignmentService {
 
 
 	public Set<Assignment> findByUser (User user) {
+		
+		boolean hasCodeReviewerRole =  user.getAuthorities().stream()
+		.filter(auth ->AuthorityEnum.ROLE_CODE_REVIEWER.name().equals(auth.getAuthority()))
+		.count() >0;
+		if(hasCodeReviewerRole) {
+			return assignmentRepo.findByCodeReviewer(user);
+		}else {
 		return assignmentRepo.findByUser(user);
+		}
 	}
 
 	public Optional<Assignment> findById(Long assignmentId) {
