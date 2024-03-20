@@ -2,11 +2,13 @@ package com.personalproject1.AssignementSubmissionApp.dto;
 
 import com.personalproject1.AssignementSubmissionApp.domain.Assignment;
 import com.personalproject1.AssignementSubmissionApp.enums.AssignmentEnum;
+import com.personalproject1.AssignementSubmissionApp.enums.AssignmentStatusEnum;
 
 public class AssignmentResponseDto {
 	
 	private Assignment assignment;
 	private AssignmentEnum[] assignmentEnums = AssignmentEnum.values();
+	private AssignmentStatusEnum[] statusEnums = AssignmentStatusEnum.values();
 	
 	
 	
@@ -21,6 +23,19 @@ public class AssignmentResponseDto {
 	}
 	public void setAssignment(Assignment assignment) {
 		this.assignment = assignment;
+	}
+	
+	
+	
+
+
+	public AssignmentStatusEnum[] getStatusEnums() {
+		return statusEnums;
+	}
+
+
+	public void setStatusEnums(AssignmentStatusEnum[] statusEnums) {
+		this.statusEnums = statusEnums;
 	}
 
 

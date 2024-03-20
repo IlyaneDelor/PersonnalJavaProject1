@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { useLocalState } from "../util/useLocalStorage";
 import ajax from "../Services/fetchService";
 import {
@@ -20,26 +20,55 @@ const AssignmentView = () => {
     githubUrl: "",
     branch: "",
     number: null,
+    status:null,
   });
 
   const [assignmentEnums, setAssignmentEnums] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [assignmentStatuses,setAssignmentStatuses] = useState([]);
+  
 
   const [jwt, setJwt] = useLocalState("", "jwt");
+  const prevAssignmentValue = useRef(assignment);
 
-  function updateAssignment(props, value) {
+  async function updateAssignment(prop, value) {
     const newAssignment = { ...assignment };
-    newAssignment[props] = value;
-    setAssignment(newAssignment);
+    newAssignment[prop] = value;
+
+    await setAssignment(newAssignment);
+    
+
   }
 
-  function save() {
-    ajax(`/api/assignments/${assignmentId}`, "PUT", jwt, assignment).then(
-      (assignmentData) => {
-        setAssignment(assignmentData);
-      }
-    );
+ function save() {
+
+    if(assignment.status === assignmentStatuses[0].status) {
+      updateAssignment("status",assignmentStatuses[1].status);
+
+    }else{
+      persist();
+    }
+
+}
+
+function persist(){
+  ajax(`/api/assignments/${assignmentId}`, "PUT", jwt, assignment).then(
+    (assignmentData) => {
+      console.log(assignmentData)
+      setAssignment(assignmentData);
+      
+    }
+  );
+}
+
+
+useEffect(() => {
+  if(prevAssignmentValue.current.status !== assignment.status){
+   persist();
   }
+
+  prevAssignmentValue.current = assignment;
+}, [assignment])
 
   useEffect(() => {
     ajax(`/api/assignments/${assignmentId}`, "GET", jwt).then(
@@ -50,13 +79,14 @@ const AssignmentView = () => {
 
         setAssignment(assignmentData);
         setAssignmentEnums(assignmentResponse.assignmentEnums);
+        
+        
+        setAssignmentStatuses(assignmentResponse.statusEnums);
       }
     );
   }, []);
 
-  useEffect(() => {
-    console.log(assignmentEnums);
-  }, [assignmentEnums]);
+
 
   return (
     <Container className="mt-5">
@@ -91,13 +121,13 @@ const AssignmentView = () => {
                     : "Select an assignment"
                 }
                 onSelect={(selectedElement) => {
-                  setSelectedAssignment(selectedElement);
+                
                   updateAssignment("number", selectedElement);
                 }}
               >
                 {assignmentEnums &&
                   assignmentEnums.map((assignmentEnum) => (
-                    <Dropdown.Item eventKey={assignmentEnum.assignmentNum}>
+                    <Dropdown.Item key= {assignmentEnum.assignmentNum} eventKey={assignmentEnum.assignmentNum}>
                       {assignmentEnum.assignmentNum}
                     </Dropdown.Item>
                   ))}
@@ -131,11 +161,21 @@ const AssignmentView = () => {
               />
             </Col>
           </Form.Group>
-
+          <div className="d-flex gap-5">
           <Button size="lg" onClick={() => save()}>
             {" "}
             Submit Assignment
           </Button>
+          
+          <Button
+                  variant="secondary"
+                  onClick={() => {
+                    window.location.href = `/dashboard`;
+                  }}
+                >
+                  Back
+                </Button>
+                </div>
         </>
       ) : (
         <></>

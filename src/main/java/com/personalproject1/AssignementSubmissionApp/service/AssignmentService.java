@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.personalproject1.AssignementSubmissionApp.domain.Assignment;
 import com.personalproject1.AssignementSubmissionApp.domain.User;
+import com.personalproject1.AssignementSubmissionApp.enums.AssignmentStatusEnum;
 import com.personalproject1.AssignementSubmissionApp.repository.AssignmentRepository;
 
 @Service
@@ -22,7 +23,9 @@ public class AssignmentService {
 		
 	Assignment assignment = new Assignment();
 	
-	assignment.setStatus("Need Submit");
+
+	assignment.setStatus(AssignmentStatusEnum.PENDING_SUBMISSION.getStatus());;
+	assignment.setNumber(findNextAssignmentToSubmit(user));
 	
 	assignment.setUser(user);
 	
@@ -30,6 +33,25 @@ public class AssignmentService {
 	}
 	
 	
+	private Integer findNextAssignmentToSubmit(User user) {
+		Set<Assignment> assignmentsByUser = assignmentRepo.findByUser(user);
+		if(assignmentsByUser == null) {
+			return 1;
+		}
+		Optional<Integer> nextAssignmentNumOpt = assignmentsByUser.stream().sorted((a1,a2) -> {
+			if(a1.getNumber() == null) return -1;
+			if(a2.getNumber() == null) return -1;
+ 			return a1.getNumber().compareTo(a2.getNumber());
+ 			
+		}).map(assignment -> {
+		if(assignment.getNumber()==null) return 1;
+		return assignment.getNumber();
+		})
+		.findFirst();
+		return nextAssignmentNumOpt.orElse(1);
+	}
+
+
 	public Set<Assignment> findByUser (User user) {
 		return assignmentRepo.findByUser(user);
 	}
